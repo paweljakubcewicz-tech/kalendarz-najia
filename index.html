@@ -116,8 +116,10 @@ button[hidden] { display: none; }
 .item .pt b { font-family: var(--font-data); font-weight: 500; }
 .item .pt span { font-size: 0.88rem; color: var(--muted); overflow-wrap: anywhere; }
 .item .pt .partner { color: var(--accent); }
+.item .pt .stem { color: var(--fg); font-size: 0.85rem; }
+.item .pt .stem .han { font-weight: 700; color: var(--accent); }
 .item .time { text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; font-size: 0.95rem; }
-.item .time span { display: block; font-size: 0.78rem; color: var(--muted); font-family: var(--font-body); }
+.item .time > span { display: block; font-size: 0.78rem; color: var(--muted); font-family: var(--font-body); }
 .item.today { background: var(--accent-soft); }
 .item.past { opacity: 0.55; }
 @media (max-width: 480px) {
@@ -286,7 +288,7 @@ footer p { margin: 0; }
     const tf = timeFmt(s.tz);
     $("todayGz").textContent = N.STEMS[t.ganzhi % 10] + N.BRANCHES[t.ganzhi % 12];
     $("todayGz").setAttribute("aria-label", N.gzLabel(t.ganzhi));
-    $("todayLine").innerHTML = `Dziś ${N.gzLabel(t.ganzhi).split(" ").slice(1).join(" ")}, ${t.element}. Otwiera się <strong>${t.meridian}</strong>: <strong class="data">${t.points[0].code}</strong> ${t.points[0].name.split(" ")[0]}, <span class="data">${tf.format(t.start)}–${tf.format(t.end)}</span>.`;
+    $("todayLine").innerHTML = `Dziś Pień <strong><span class="han">${N.STEMS[t.stem]}</span> ${N.STEMS_PL[t.stem]}</strong> (${t.element}), dzień ${N.gzLabel(t.ganzhi).split(" ").slice(1).join(" ")}. Otwiera się <strong>${t.meridian}</strong>: <strong class="data">${t.points[0].code}</strong> ${t.points[0].name.split(" ")[0]}, <span class="data">${tf.format(t.start)}–${tf.format(t.end)}</span>.`;
 
     // Cykl 10 dni od dziś
     const cyc = $("cycle"); cyc.textContent = "";
@@ -320,8 +322,9 @@ footer p { margin: 0; }
           `<div class="date"><b>${ownDate}</b><span>${DOW[dd.getUTCDay()]}</span></div>` +
           `<div class="gz" aria-label="${N.gzLabel(e.ganzhi)}">${N.STEMS[e.ganzhi % 10]}${N.BRANCHES[e.ganzhi % 12]}</div>` +
           `<div class="pt"><b>${e.points.map((p) => p.code).join(", ")}${e.partner.length ? ` <span class="partner">(${e.partner.map((p) => p.code).join(", ")})</span>` : ""}</b>` +
-          `<span>${e.meridian} · ${e.points[0].name}</span></div>` +
-          `<div class="time">${tf.format(e.start)}–${tf.format(e.end)}<span>${startDate !== ownDate ? startDate + " · " : ""}${e.hour.label.split(" ")[0]}</span></div>`;
+          `<span>${e.meridian} · ${e.points[0].name}</span>` +
+          `<span class="stem">Pień dnia <span class="han">${N.STEMS[e.stem]}</span> ${N.STEMS_PL[e.stem]} · ${e.element}</span></div>` +
+          `<div class="time">${tf.format(e.start)}–${tf.format(e.end)}<span>${startDate !== ownDate ? startDate + " · " : ""}godz. <span class="han">${e.hour.label.split(" ")[0]}</span></span></div>`;
         frag.appendChild(row);
       }
       list.appendChild(frag);

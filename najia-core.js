@@ -126,9 +126,9 @@
     const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//meridian//Zi Wu Liu Zhu Na Jia//PL", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:" + esc(o.calendarName || "Otwarcia meridianów")];
     for (const e of openings) {
       const main = e.points.map((p) => p.code).join(", ");
-      const summary = `${main} ${e.points[0].name.split(" ")[0]}, ${e.meridian}` + (e.partner.length ? ` (${e.partner.map((p) => p.code).join(", ")})` : "");
+      const summary = `${STEMS[e.stem]} ${STEMS_PL[e.stem]} · ${main} ${e.points[0].name.split(" ")[0]}, ${e.meridian}` + (e.partner.length ? ` (${e.partner.map((p) => p.code).join(", ")})` : "");
       const desc = [
-        `Dzień ${gzLabel(e.ganzhi)}, ${e.element}`,
+        `Pień dnia: ${STEMS[e.stem]} ${STEMS_PL[e.stem]} (${e.element}), dzień ${gzLabel(e.ganzhi)}`,
         `Meridian dnia: ${e.meridian}`,
         `Godzina chińska: ${e.hour.label}`,
         ...e.points.map(pointLine),
