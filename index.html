@@ -62,6 +62,8 @@ h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color
 /* Cykl 10 Pni */
 .cycle { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; }
 .cycle div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 2px; text-align: center; display: grid; gap: 2px; }
+.cycle .n { font-family: var(--font-data); font-size: 0.72rem; color: var(--muted); }
+.cycle .now .n { color: var(--accent); }
 .cycle .s { font-family: var(--font-han); font-size: 1.25rem; font-weight: 700; }
 .cycle .m { font-family: var(--font-data); font-size: 0.72rem; color: var(--muted); }
 .cycle .d { font-size: 0.7rem; color: var(--muted); }
@@ -142,7 +144,7 @@ footer p { margin: 0; }
   </header>
 
   <section aria-labelledby="cycleH">
-    <h2 id="cycleH" style="margin-bottom:8px">Cykl 10 Pni: meridian otwierający dzień</h2>
+    <h2 id="cycleH" style="margin-bottom:8px">Cykl 10 Pni (1–10): meridian otwierający dzień</h2>
     <div class="cycle" id="cycle"></div>
   </section>
 
@@ -227,7 +229,7 @@ footer p { margin: 0; }
 
   <footer>
     <p><b>Na Jia:</b> klasyczna sekwencja Xu Fenga (<i>Zhenjiu Daquan</i>, 子午流注逐日按时定穴歌). <b>AcuRhythm:</b> to samo plus punkt dnia partnera w nawiasie (合日互用: 甲己, 乙庚, 丙辛, 丁壬, 戊癸), jak w widoku Adopt. Stems aplikacji AcuRhythm Pro.</p>
-    <p>Godzina Zi (子) zaczyna się o 23:00 i należy do następnego dnia. Czas słoneczny = długość geograficzna + równanie czasu (wzór Spencera/NOAA). Godziny pokazane w strefie wybranego miejsca.</p>
+    <p>Godzina Zi (子) zaczyna się o 23:00 i należy do następnego dnia. Czas słoneczny = długość geograficzna + równanie czasu (wzór Spencera/NOAA). Godziny pokazane w strefie wybranego miejsca. Numeracja jak w AcuRhythm: Pień 甲 = 1 … 癸 = 10, Gałąź 子 = 1 … 亥 = 12 (np. S7B11 = 庚戌).</p>
   </footer>
 </div>
 
@@ -288,7 +290,7 @@ footer p { margin: 0; }
     const tf = timeFmt(s.tz);
     $("todayGz").textContent = N.STEMS[t.ganzhi % 10] + N.BRANCHES[t.ganzhi % 12];
     $("todayGz").setAttribute("aria-label", N.gzLabel(t.ganzhi));
-    $("todayLine").innerHTML = `Dziś Pień <strong><span class="han">${N.STEMS[t.stem]}</span> ${N.STEMS_PL[t.stem]}</strong> (${t.element}), dzień ${N.gzLabel(t.ganzhi).split(" ").slice(1).join(" ")}. Otwiera się <strong>${t.meridian}</strong>: <strong class="data">${t.points[0].code}</strong> ${t.points[0].name.split(" ")[0]}, <span class="data">${tf.format(t.start)}–${tf.format(t.end)}</span>.`;
+    $("todayLine").innerHTML = `Dziś Pień <strong>${t.stem + 1} <span class="han">${N.STEMS[t.stem]}</span> ${N.STEMS_PL[t.stem]}</strong>, Gałąź <strong>${(t.ganzhi % 12) + 1} <span class="han">${N.BRANCHES[t.ganzhi % 12]}</span> ${N.BRANCHES_PL[t.ganzhi % 12]}</strong> (${N.sbLabel(t.ganzhi)}, ${t.element}). Otwiera się <strong>${t.meridian}</strong>: <strong class="data">${t.points[0].code}</strong> ${t.points[0].name.split(" ")[0]}, <span class="data">${tf.format(t.start)}–${tf.format(t.end)}</span>.`;
 
     // Cykl 10 dni od dziś
     const cyc = $("cycle"); cyc.textContent = "";
@@ -298,7 +300,7 @@ footer p { margin: 0; }
       const el = document.createElement("div");
       if (i === 0) el.className = "now";
       el.title = `${pad(d.d)}.${pad(d.m)}: ${N.MERIDIANS[code]}`;
-      el.innerHTML = `<span class="s">${N.STEMS[st]}</span><span class="m">${code}</span><span class="d">${i === 0 ? "dziś" : pad(d.d) + "." + pad(d.m)}</span>`;
+      el.innerHTML = `<span class="n">${st + 1}</span><span class="s">${N.STEMS[st]}</span><span class="m">${code}</span><span class="d">${i === 0 ? "dziś" : pad(d.d) + "." + pad(d.m)}</span>`;
       cyc.appendChild(el);
     }
 
@@ -323,7 +325,7 @@ footer p { margin: 0; }
           `<div class="gz" aria-label="${N.gzLabel(e.ganzhi)}">${N.STEMS[e.ganzhi % 10]}${N.BRANCHES[e.ganzhi % 12]}</div>` +
           `<div class="pt"><b>${e.points.map((p) => p.code).join(", ")}${e.partner.length ? ` <span class="partner">(${e.partner.map((p) => p.code).join(", ")})</span>` : ""}</b>` +
           `<span>${e.meridian} · ${e.points[0].name}</span>` +
-          `<span class="stem">Pień dnia <span class="han">${N.STEMS[e.stem]}</span> ${N.STEMS_PL[e.stem]} · ${e.element}</span></div>` +
+          `<span class="stem">Pień ${e.stem + 1} <span class="han">${N.STEMS[e.stem]}</span> ${N.STEMS_PL[e.stem]} · Gałąź ${(e.ganzhi % 12) + 1} <span class="han">${N.BRANCHES[e.ganzhi % 12]}</span> ${N.BRANCHES_PL[e.ganzhi % 12]} · ${e.element}</span></div>` +
           `<div class="time">${tf.format(e.start)}–${tf.format(e.end)}<span>${startDate !== ownDate ? startDate + " · " : ""}godz. <span class="han">${e.hour.label.split(" ")[0]}</span></span></div>`;
         frag.appendChild(row);
       }

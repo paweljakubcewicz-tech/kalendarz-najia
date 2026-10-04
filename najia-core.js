@@ -103,6 +103,8 @@
     };
   }
 
+  // Numeracja jak w AcuRhythm: S = Pień (甲 = 1 … 癸 = 10), B = Gałąź (子 = 1 … 亥 = 12).
+  const sbLabel = (g) => `S${(g % 10) + 1}B${(g % 12) + 1}`;
   const gzLabel = (g) => STEMS[g % 10] + BRANCHES[g % 12] + " " + STEMS_PL[g % 10] + " " + BRANCHES_PL[g % 12];
 
   // --- iCalendar ---
@@ -126,9 +128,9 @@
     const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//meridian//Zi Wu Liu Zhu Na Jia//PL", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:" + esc(o.calendarName || "Otwarcia meridianów")];
     for (const e of openings) {
       const main = e.points.map((p) => p.code).join(", ");
-      const summary = `${STEMS[e.stem]} ${STEMS_PL[e.stem]} · ${main} ${e.points[0].name.split(" ")[0]}, ${e.meridian}` + (e.partner.length ? ` (${e.partner.map((p) => p.code).join(", ")})` : "");
+      const summary = `${sbLabel(e.ganzhi)} ${STEMS[e.ganzhi % 10]}${BRANCHES[e.ganzhi % 12]} · ${main} ${e.points[0].name.split(" ")[0]}, ${e.meridian}` + (e.partner.length ? ` (${e.partner.map((p) => p.code).join(", ")})` : "");
       const desc = [
-        `Pień dnia: ${STEMS[e.stem]} ${STEMS_PL[e.stem]} (${e.element}), dzień ${gzLabel(e.ganzhi)}`,
+        `Pień ${e.stem + 1}: ${STEMS[e.stem]} ${STEMS_PL[e.stem]} (${e.element}) · Gałąź ${(e.ganzhi % 12) + 1}: ${BRANCHES[e.ganzhi % 12]} ${BRANCHES_PL[e.ganzhi % 12]} · dzień ${sbLabel(e.ganzhi)} ${gzLabel(e.ganzhi)}`,
         `Meridian dnia: ${e.meridian}`,
         `Godzina chińska: ${e.hour.label}`,
         ...e.points.map(pointLine),
@@ -149,5 +151,5 @@
     return lines.map(fold).join("\r\n") + "\r\n";
   }
 
-  root.NaJia = { STEMS, STEMS_PL, BRANCHES, BRANCHES_PL, MERIDIANS, SEQ, dayNumber, fromDayNumber, ganzhi, stemOf, openPoints, hourStem, slot, dayOpening, gzLabel, meridianOf, buildICS, tzOffset };
+  root.NaJia = { STEMS, STEMS_PL, BRANCHES, BRANCHES_PL, MERIDIANS, SEQ, dayNumber, fromDayNumber, ganzhi, stemOf, openPoints, hourStem, slot, dayOpening, gzLabel, sbLabel, meridianOf, buildICS, tzOffset };
 })(typeof window !== "undefined" ? window : globalThis);
